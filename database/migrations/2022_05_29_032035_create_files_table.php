@@ -15,6 +15,11 @@ class CreateFilesTable extends Migration
     {
         Schema::create('files', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('game_id');
+            $table->foreign('game_id')->references('id')->on('games');
+            $table->unsignedInteger('x_index')->nullable();
+            $table->unsignedInteger('y_index')->nullable();
+            $table->boolean('is_ful_image')->default(false);
             $table->string('url');
             $table->timestamps();
         });

@@ -88,100 +88,45 @@ class FileController extends Controller
         //
     }
 
-    /*public function storeImageDirty(Request $request){
-        $request->validate([
-            'file' => 'required|image|max:2048'
-        ]);
-//        $imagePath = $request->file('file')->store('public/images/');
-//        dd($imagePath);
-//        $url = Storage::url($imagePath);
-//return dd($url);
-
-        File::create([
-            'url' => $url
-        ]);
-
-
-        $width = 100;
-        $height = 100;
-        $source = @imagecreatefromjpeg( $request->file('file') );
-//        return dd($request->file('file'),$source);
-        $source_width = imagesx( $source );
-        $source_height = imagesy( $source );
-                for( $col = 0; $col < $source_width / $width; $col++)
-                {
-                    for( $row = 0; $row < $source_height / $height; $row++)
-                    {
-//                        $fn ='img0'.$col.  '_' .$row.'.jpg' ;
-
-//                        return dd($uploaded);
-
-                        $imag = UploadedFile::createFromBase(\Intervention\Image\Facades\Image::make($source))->store('public/images');
-                        return dd($imag);
-                        $image = \Intervention\Image\Facades\Image::make($source)->save("public/images");
-                        return dd($image);
-                        $destinationPath = 'public/images';
-
-
-                        $fn ='img0'.$col.  '_' .$row.'.jpg' ;
-                        $im = @imagecreatetruecolor( $width, $height );
-                        return dd($im);
-                        $finalpath = UploadedFile::createFromBase()->store('public/images/');
-                        imagecopyresized( $im, $source, 0, 0,
-                            $col * $width, $row * $height, $width, $height,
-                            $width, $height );
-                        imagejpeg($im,$fn);
-                        imagedestroy( $im );
-                        $finalImage = \Intervention\Image\Facades\Image::make($im);
-                         return dd($finalImage);
-                         $finalFinalImage = UploadedFile::fake()->createWithContent($fn, $finalImage )->store('public/images/');
-                        $uploaded = UploadedFile::createFromBase($finalFinalImage)->storeAs('public/images/', $fn);
-
-                         $url = Storage::url($finalFinalImage);
-                        File::create([
-                            'url' => $url
-                        ]);
-                         return dd($url);
-                        $uploaded = UploadedFile::createFromBase($finalImage)->createWithContent($fn,\Intervention\Image\Facades\Image::make($im))->storePublicly('public/images/', [$fn]);
-                        return dd($uploaded);
-                        return dd($uploaded);
-                        $request->file('')->store('public/images/');
-                        $newImage = UploadedFile::fake()->image($fn)->store('public/images/');
-                        return dd(Storage::url($newImage));
-                        File::create([
-                            'url' => Storage::url($uploaded)
-                        ]);
-                        return dd($new_file);
-                    }
-                }
-                return redirect()->route('loadImage');
-    }
-    */
     public function storeImage(Request $request){
         //validating I've received the image
         $request->validate([
-            'file' => 'required|image|max:2048'
+            'file' => 'required|image|max:2048',
+            'rows' => 'required',
+            'cols' => 'required'
         ]);
 
+
         //Dimensions of each image protion
-        $width = 100;
-        $height = 100;
+//        $width = $request->cols / $request->file->size;
+//        $height = 100;
 
         //Image I want to work with
         $source = @imagecreatefromjpeg( $request->file('file') );
         $source_width = imagesx( $source );
         $source_height = imagesy( $source );
 
+        $cant_cols = $source_width / ($source_width / $request->cols);
+        $cant_rows = $source_height / ($source_height / $request->rows);
+
+        $width = $source_width / $cant_cols;
+        $height = $source_height / $cant_rows;
+
+//        return dd($source_width, $cant_cols, $width , $source_height, $cant_rows, $height);
+
+        $counter = 0;
+
         //These "for" are to find coordinate where to split image
-        for( $col = 0; $col < $source_width / $width; $col++)
+        for( $col = 0; $col < $cant_cols; $col++)
         {
-            for( $row = 0; $row < $source_height / $height; $row++)
+            for( $row = 0;  $row < $cant_rows; $row++)
             {
+//                $counter =+ 1;
                 //Name to the splited images
                 $filePath = Storage::path('public\images\img0'.$col.  '_0' .$row.'.jpg');
 
                 //Creating the new Image
-                $im = @imagecreatetruecolor( $width, $height );
+                $im = @imagecreatetruecolor( $width, $height);
 
                 //Setting the new image content from source in the specified coordinates
                 imagecopyresized( $im, $source, 0, 0,
@@ -200,8 +145,10 @@ class FileController extends Controller
                 File::create([
                     'url' => $url
                 ]);
+
             }
         }
+//        return dd($counter);
         return redirect()->route('loadImage');
     }
 
