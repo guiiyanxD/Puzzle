@@ -41,4 +41,12 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public function game(){
+        $this->hasMany(Game::class);
+    }
+
+    public function session(){
+        $this->hasMany(GameSession::class);
+    }
 }

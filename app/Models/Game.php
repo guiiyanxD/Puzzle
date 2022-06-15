@@ -8,4 +8,25 @@ use Illuminate\Database\Eloquent\Model;
 class Game extends Model
 {
     use HasFactory;
+
+    protected $fillable = [
+        'cols', 'rows', 'status_id','user_id', 'code_invitation'
+    ];
+
+    public function status(){
+        $this->belongsTo(StatusGame::class, 'user_id');
+    }
+
+    public function user(){
+        $this->belongsTo(User::class, 'user_id');
+    }
+
+    public function session(){
+        $this->hasMany(GameSession::class);
+    }
+
+    public function file(){
+        $this->hasMany(File::class);
+    }
+
 }

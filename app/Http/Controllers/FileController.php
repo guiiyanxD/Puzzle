@@ -3,11 +3,15 @@
 namespace App\Http\Controllers;
 
 use App\Models\File;
+use App\Models\Game;
+use App\Models\GameSession;
 use Illuminate\Http\Request;
 use Illuminate\Http\Testing\FileFactory;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Intervention\Image\Image;
+use Psy\Util\Str;
 
 class FileController extends Controller
 {
@@ -19,7 +23,9 @@ class FileController extends Controller
     public function index()
     {
         $images =  File::all();
-        return view('index_images', compact('images'));
+        $game = Game::where('id',13)->get();
+        return dd($game);
+//        return view('index_images', compact('images','game'));
     }
 
     /**
@@ -88,6 +94,21 @@ class FileController extends Controller
         //
     }
 
+    /**
+     * @param $image
+     * @return false|\GdImage|resource
+     * It only will work with jpeg, png and gif format of images and will return an image
+     */
+    public function createImageFromMime($image){
+        $new_image = getimagesize($image);
+        if($new_image['mime'] == 'image/gif')
+            return imagecreatefromgif($image);
+        elseif($new_image['mime'] == 'image/png')
+            return imagecreatefrompng($image);
+        else
+            return imagecreatefromjpeg($image);
+    }
+
     public function storeImage(Request $request){
         //validating I've received the image
         $request->validate([
@@ -96,54 +117,87 @@ class FileController extends Controller
             'cols' => 'required'
         ]);
 
-
-        //Dimensions of each image protion
-//        $width = $request->cols / $request->file->size;
-//        $height = 100;
-
         //Image I want to work with
-        $source = @imagecreatefromjpeg( $request->file('file') );
+        $source = imagecreatefromjpeg( $request->file('file') );
         $source_width = imagesx( $source );
         $source_height = imagesy( $source );
 
-        $cant_cols = $source_width / ($source_width / $request->cols);
-        $cant_rows = $source_height / ($source_height / $request->rows);
+        //getting image ratio
+        $ratiow = 854/ $source_width; //854max width
+        $ratioh = 560 / $source_width; //560max height
+        $ratio = min($ratioh, $ratiow);
 
-        $width = $source_width / $cant_cols;
-        $height = $source_height / $cant_rows;
+        //new width and height
+        $newW = $source_width*$ratiow;
+        $newY = $source_height*$ratio;
 
-//        return dd($source_width, $cant_cols, $width , $source_height, $cant_rows, $height);
+        //creating the new image
+        $resizedImage = imageCreateTrueColor($newW, $newY);
+        imagecopyresampled($resizedImage, $source, 0, 0, 0, 0, $newW, $newY, $source_width, $source_height);
 
-        $counter = 0;
+        $game = Game::create([
+            'rows' => $request->rows,
+            'cols' => $request->cols,
+            'code_invitation' => \Illuminate\Support\Str::random(40),
+            'user_id' => Auth::user()->getAuthIdentifier(),
+            'status_id' => 1,
+        ]);
+
+//        $filePath = Storage::path('public\images\img0'.$col.  '_0' .$row.'ofGame'.$game->id. '.jpg');
+
+//        $fulImageUrl = $request->file('file')->storeAs('public/images/','game_' . $game->id . '.jpg');
+        $fulImagesUrl = Storage::path('public/images/game_' . $game->id . '.jpg');
+        imagejpeg($resizedImage,$fulImagesUrl);
+        imagedestroy($resizedImage);
+
+        File::create([
+            'game_id' => $game->id,
+            'is_ful_image' => true,
+            'width' => $newW,
+            'height' => $newY,
+            'url' => Storage::url('public/images/game_' . $game->id . '.jpg'),
+        ]);
+
+        GameSession::create([
+            'game_id' => $game->id,
+            'user_id' => $game->user_id,
+            'joined_time' => now('America/La_Paz'),
+
+        ]);
+
+        //Width and Height of each piece of image
+        $cant_cols = $newW / ($newW / $request->cols);
+        $cant_rows = $newY / ($newY / $request->rows);
+
+        $piecesWidth = $newW / $cant_cols;
+        $piecesHeight = $newY / $cant_rows;
 
         //These "for" are to find coordinate where to split image
         for( $col = 0; $col < $cant_cols; $col++)
         {
             for( $row = 0;  $row < $cant_rows; $row++)
             {
-//                $counter =+ 1;
                 //Name to the splited images
-                $filePath = Storage::path('public\images\img0'.$col.  '_0' .$row.'.jpg');
-
+                $filePath = Storage::path('public\images\img0'.$col.  '_0' .$row.'ofGame'.$game->id. '.jpg');
                 //Creating the new Image
-                $im = @imagecreatetruecolor( $width, $height);
-
+                $im = @imagecreatetruecolor( $piecesWidth, $piecesHeight);
                 //Setting the new image content from source in the specified coordinates
-                imagecopyresized( $im, $source, 0, 0,
-                    $col * $width, $row * $height, $width, $height,
-                    $width, $height );
+                imagecopyresized( $im, $source, 0, 0,$col * $piecesWidth, $row * $piecesHeight, $piecesWidth, $piecesHeight, $piecesWidth, $piecesHeight );
                 //Output the new Image(im = the image, filePath = the path of folder to save it)
                 imagejpeg($im, $filePath);
-
                 //free memory
                 imagedestroy( $im );
-
-
                 //Path to access from server
-                $fileName = 'public/images/img0'.$col.  '_0' .$row.'.jpg';
+                $fileName = 'public/images/img0'.$col.  '_0' .$row.'ofGame'.$game->id. '.jpg';
                 $url = Storage::url($fileName);
                 File::create([
-                    'url' => $url
+                    'url' => $url,
+                    'x_index' => $col,
+                    'y_index'=> $row,
+                    'is_ful_image'=> false,
+                    'game_id' => $game->id,
+                    'width' => $piecesWidth,
+                    'height' => $piecesHeight,
                 ]);
 
             }
@@ -159,8 +213,19 @@ class FileController extends Controller
     }
 
     public function indexImages(){
-        $images =  File::all();
-        return view('index_images', compact('images'));
+        $all_images =  File::all();
+        $ful_image = $all_images[0];
+
+        $images = $all_images->filter(function($selected_image){
+            return $selected_image->is_ful_image != true;
+        });
+
+//        return dd(count($images));
+        $images = $images->shuffle();
+//        return dd($game);
+        $game = Game::where('id',5)->get();
+
+        return view('index_images', compact('images', 'game', 'ful_image'));
     }
 
     public function splitImages(){

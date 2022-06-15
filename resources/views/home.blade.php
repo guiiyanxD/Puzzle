@@ -1,21 +1,30 @@
 @extends('layouts.app')
-
 @section('content')
 <div class="container">
     <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="card">
-                <div class="card-header">{{ __('Dashboard') }}</div>
+        <div class="col-md-4">
+            <div class="card bg-dark text-white text-center " style="width: 414px; height: 237px; object-fit: cover" >
+                <div class="card-header">{{ __('Nuevo juego') }}</div>
+                <a href="{{ route('createGame') }}">
+                    <img class="card-img-top img-fluid" style="object-fit: cover"  src="{{asset('/storage/dashboard/startGame2.jpg')}}" alt="">
+                </a>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card text-center bg-dark text-white" style="width: 414px; height: 237px; object-fit: cover">
+                <div class="card-header">{{ __('Cargar Juego') }}</div>
+                <a href="{{ route('loadImage') }}">
+                    <img class="card-img-top img-fluid"  src="{{asset('/storage/dashboard/resumeGame.jpg')}}" alt="">
+                </a>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card bg-dark text-white text-center" style="width: 414px; height: 237px; object-fit: cover">
+                <div class="card-header">{{ __('Ranking') }}</div>
 
-                <div class="card-body">
-                    @if (session('status'))
-                        <div class="alert alert-success" role="alert">
-                            {{ session('status') }}
-                        </div>
-                    @endif
-
-                    {{ __('You are logged in!') }}
-                </div>
+                <a href="{{ route('loadImage') }}">
+                    <img class="card-img-top img-fluid" src="{{asset('/storage/dashboard/rankinGame.jpg')}}" alt="">
+                </a>
             </div>
         </div>
     </div>

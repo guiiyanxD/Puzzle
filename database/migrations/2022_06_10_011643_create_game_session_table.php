@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateUserGameSessionsTable extends Migration
+class CreateGameSessionTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,15 +13,15 @@ class CreateUserGameSessionsTable extends Migration
      */
     public function up()
     {
-        Schema::create('user_game_sessions', function (Blueprint $table) {
+        Schema::create('game_session', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('game_id');
             $table->unsignedInteger('score')->default(0);
             $table->unsignedInteger('movements')->default(0);
-            $table->unsignedBigInteger('winner')->default(0);
+            $table->string('winner')->nullable();
             $table->dateTime('joined_time');
-            $table->dateTime('left_time');
+            $table->dateTime('left_time')->nullable();
             $table->timestamps();
 
             $table->foreign('user_id')->references('id')->on('users');
@@ -36,6 +36,6 @@ class CreateUserGameSessionsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('user_game_sessions');
+        Schema::dropIfExists('game_session');
     }
 }
