@@ -32,7 +32,7 @@
                                 <h5>{{__('Imagen completa')}}</h5>
                             </div>
                             <div class="card-body" style="">
-                                <img class="img-fluid image-cover" src="{{asset($ful_image->url)}}" alt="">
+                                <img class="img-fluid image-cover" src="{{asset($ful_image[0]->url)}}" alt="">
                             </div>
                         </div>
                     </div>
@@ -121,6 +121,7 @@
         piezas_container.addEventListener('dragstart',e=>{
            e.dataTransfer.setData('id', e.target.id);
         });
+
         puzzle.addEventListener('dragover', e =>{
             e.preventDefault();
             e.target.classList.add('hover');
@@ -134,8 +135,7 @@
             e.target.classList.remove('hover');
 
             const id = e.dataTransfer.getData('id'); //Obtengo el Id de la pieza por que me esta transfiriendo la data que sale con dragStart
-            // console.log('Pieza: '+id);
-            // console.log('Cajon:'+e.target.id); //Obtengo el id del cajon por que esta escuchando los eventos de los cajones
+
             if( e.target.id === id ){
                 e.target.classList.remove('my_placeholder');
                 e.target.classList.add('my_placeholder_replaced');

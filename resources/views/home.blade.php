@@ -13,7 +13,7 @@
         <div class="col-md-4">
             <div class="card text-center bg-dark text-white" style="width: 414px; height: 237px; object-fit: cover">
                 <div class="card-header">{{ __('Cargar Juego') }}</div>
-                <a href="{{ route('loadImage') }}">
+                <a href="{{ route('savedGames',[\Illuminate\Support\Facades\Auth::id()]) }}">
                     <img class="card-img-top img-fluid"  src="{{asset('/storage/dashboard/resumeGame.jpg')}}" alt="">
                 </a>
             </div>

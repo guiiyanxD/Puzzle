@@ -31,6 +31,9 @@ Route::put('/game/addScore',[\App\Http\Controllers\GameSessionController::class,
 Route::put('/game/addMovement',[\App\Http\Controllers\GameSessionController::class,'addMovement'])->name('addMovement');
 Route::put('/game/subScore',[\App\Http\Controllers\GameSessionController::class,'subScore'])->name('subScore');
 
+//See saved games
+Route::get('games/saved/{id}',[\App\Http\Controllers\GameController::class,'show'])->name('savedGames');
+
 
 
 Route::get('/load_image', function (){

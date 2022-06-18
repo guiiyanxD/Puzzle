@@ -5,11 +5,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class File extends Model
+class PortraitFile extends Model
 {
     use HasFactory;
     protected $fillable = [
-        'url','game_id','x_index','y_index','is_ful_image','width','height'
+        'url','game_id'
     ];
 
     public function game(){

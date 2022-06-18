@@ -14,19 +14,23 @@ class Game extends Model
     ];
 
     public function status(){
-        $this->belongsTo(StatusGame::class, 'user_id');
+        return $this->belongsTo(StatusGame::class, 'user_id');
     }
 
     public function user(){
-        $this->belongsTo(User::class, 'user_id');
+        return $this->belongsTo(User::class, 'user_id');
     }
 
     public function session(){
-        $this->hasMany(GameSession::class);
+        return $this->hasMany(GameSession::class);
     }
 
     public function file(){
-        $this->hasMany(File::class);
+        return $this->hasMany(File::class);
+    }
+
+    public function portrait(){
+        return $this->hasOne(PortraitFile::class);
     }
 
 }

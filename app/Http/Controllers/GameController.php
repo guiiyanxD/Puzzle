@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\File;
 use App\Models\Game;
 use App\Models\GameSession;
+use App\Models\PortraitFile;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -79,13 +80,17 @@ class GameController extends Controller
         imagejpeg($resizedImage,$fulImagesUrl);
         imagedestroy($resizedImage);
 
-        File::create([
+        PortraitFile::create([
+            'game_id' => $game->id,
+            'url' => Storage::url('public/images/game_' . $game->id . '.jpg'),
+        ]);
+        /*File::create([
             'game_id' => $game->id,
             'is_ful_image' => true,
             'width' => $newW,
             'height' => $newY,
             'url' => Storage::url('public/images/game_' . $game->id . '.jpg'),
-        ]);
+        ]);*/
 
         GameSession::create([
             'game_id' => $game->id,
@@ -138,16 +143,17 @@ class GameController extends Controller
     public function start($game_id){
 
         $game = Game::where('id',$game_id)->get();
-
+//return dd($game);
         $all_images =  File::where('game_id', $game_id )->get();
 
-        $ful_image  = $all_images->firstOrFail();
+//        $ful_image  = $all_images->firstOrFail();
+        $ful_image  = PortraitFile::where('game_id',$game_id)->get() ;
 //        return dd($ful_image);
 
         $images = $all_images->filter(function($selected_image) {
             return $selected_image->is_ful_image != true;
         });
-//        return dd($images);
+
         $images = $images->shuffle();
 
         return view('index_images', compact('images', 'game', 'ful_image'));
@@ -159,42 +165,17 @@ class GameController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show($user_id)
     {
-        //
+        $games = Game::where('user_id', $user_id)->with('portrait')->get();
+//        return dd($games[0]->portrait->url);
+//        foreach ($games as $portadas){
+//            $portada = $portadas->file->where('is_ful_image', true);
+//        }
+//        $portada = File::where('game_id', $games->id)->get();
+//        return dd($games);
+        return view('game.show', compact('games'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
-    }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
-    {
-        //
-    }
 }

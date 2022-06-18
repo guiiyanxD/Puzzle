@@ -15,14 +15,12 @@ class GameSession extends Model
         'movements','winner','joined_time','left_time'
     ];
 
-    public function addScore(){
 
-    }
     public function game(){
-        $this->belongsTo(Game::class, 'game_id');
+        return $this->belongsTo(Game::class, 'game_id');
     }
 
     public function user(){
-        $this->belongsTo(User::class,'user_id');
+        return $this->belongsTo(User::class,'user_id');
     }
 }
