@@ -10,7 +10,7 @@
                         </h2>
                     </div>
                     <div class="card-body">
-                        <form action="{{route('storeImage')}}" method="post" enctype="multipart/form-data">
+                        <form action="{{route('storeGame')}}" method="post" enctype="multipart/form-data">
                             @csrf
                             <div class="row m-0">
                                 <div class="col-lg-12">

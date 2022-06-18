@@ -15,6 +15,9 @@ class GameSession extends Model
         'movements','winner','joined_time','left_time'
     ];
 
+    public function addScore(){
+
+    }
     public function game(){
         $this->belongsTo(Game::class, 'game_id');
     }

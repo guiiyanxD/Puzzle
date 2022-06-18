@@ -213,19 +213,19 @@ class FileController extends Controller
     }
 
     public function indexImages(){
-        $all_images =  File::all();
-        $ful_image = $all_images[0];
-
-        $images = $all_images->filter(function($selected_image){
-            return $selected_image->is_ful_image != true;
-        });
-
-//        return dd(count($images));
-        $images = $images->shuffle();
-//        return dd($game);
-        $game = Game::where('id',5)->get();
-
-        return view('index_images', compact('images', 'game', 'ful_image'));
+//        $all_images =  File::all();
+//        $ful_image = $all_images[0];
+//
+//        $images = $all_images->filter(function($selected_image){
+//            return $selected_image->is_ful_image != true;
+//        });
+//
+////        return dd(count($images));
+//        $images = $images->shuffle();
+////        return dd($game);
+//        $game = Game::where('id',6)->get();
+//
+//        return view('index_images', compact('images', 'game', 'ful_image'));
     }
 
     public function splitImages(){

@@ -57,8 +57,8 @@ class GameController extends Controller
         $ratio = min($ratioh, $ratiow);
 
         //new width and height
-        $newW = $source_width*$ratiow;
-        $newY = $source_height*$ratio;
+        $newW = floor($source_width*$ratiow);
+        $newY = floor($source_height*$ratioh);
 
         //creating the new image
         $resizedImage = imageCreateTrueColor($newW, $newY);
@@ -98,20 +98,20 @@ class GameController extends Controller
         $cant_cols = $newW / ($newW / $request->cols);
         $cant_rows = $newY / ($newY / $request->rows);
 
-        $piecesWidth = $newW / $cant_cols;
-        $piecesHeight = $newY / $cant_rows;
+        $piecesWidth = floor($newW / $cant_cols);
+        $piecesHeight = floor($newY / $cant_rows);
 
         //These "for" are to find coordinate where to split image
-        for( $col = 0; $col < $cant_cols; $col++)
+        for( $col = 0; $col < $request->cols; $col++)
         {
-            for( $row = 0;  $row < $cant_rows; $row++)
+            for( $row = 0;  $row < $request->rows; $row++)
             {
                 //Name to the splited images
                 $filePath = Storage::path('public\images\img0'.$col.  '_0' .$row.'ofGame'.$game->id. '.jpg');
                 //Creating the new Image
                 $im = @imagecreatetruecolor( $piecesWidth, $piecesHeight);
                 //Setting the new image content from source in the specified coordinates
-                imagecopyresized( $im, $source, 0, 0,$col * $piecesWidth, $row * $piecesHeight, $piecesWidth, $piecesHeight, $piecesWidth, $piecesHeight );
+                imagecopyresized( $im, $resizedImage, 0, 0,$col * $piecesWidth, $row * $piecesHeight, $piecesWidth, $piecesHeight, $piecesWidth, $piecesHeight );
                 //Output the new Image(im = the image, filePath = the path of folder to save it)
                 imagejpeg($im, $filePath);
                 //free memory
@@ -131,8 +131,26 @@ class GameController extends Controller
 
             }
         }
-//        return dd($counter);
-        return redirect()->route('indexImages');
+//        return dd($game->id);
+        return redirect()->route('startGame', $game->id);
+    }
+
+    public function start($game_id){
+
+        $game = Game::where('id',$game_id)->get();
+
+        $all_images =  File::where('game_id', $game_id )->get();
+
+        $ful_image  = $all_images->firstOrFail();
+//        return dd($ful_image);
+
+        $images = $all_images->filter(function($selected_image) {
+            return $selected_image->is_ful_image != true;
+        });
+//        return dd($images);
+        $images = $images->shuffle();
+
+        return view('index_images', compact('images', 'game', 'ful_image'));
     }
 
     /**

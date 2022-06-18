@@ -22,6 +22,15 @@ Route::resource('/status',\App\Http\Controllers\StatusGameController::class)->on
 
 //New Game window
 Route::get('/game/difficulty',[\App\Http\Controllers\GameController::class, 'create'])->name('createGame');
+Route::post('/game/difficulty/set',[\App\Http\Controllers\GameController::class, 'store'])->name('storeGame');
+Route::get('/game/start/{id}',[\App\Http\Controllers\GameController::class, 'start'])->name('startGame');
+
+
+//GameSession Updates
+Route::put('/game/addScore',[\App\Http\Controllers\GameSessionController::class,'addScore'])->name('addScore');
+Route::put('/game/addMovement',[\App\Http\Controllers\GameSessionController::class,'addMovement'])->name('addMovement');
+Route::put('/game/subScore',[\App\Http\Controllers\GameSessionController::class,'subScore'])->name('subScore');
+
 
 
 Route::get('/load_image', function (){
