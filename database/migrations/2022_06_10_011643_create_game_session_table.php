@@ -20,6 +20,7 @@ class CreateGameSessionTable extends Migration
             $table->unsignedInteger('score')->default(0);
             $table->unsignedInteger('movements')->default(0);
             $table->string('winner')->nullable();
+
             $table->dateTime('joined_time');
             $table->dateTime('left_time')->nullable();
             $table->timestamps();

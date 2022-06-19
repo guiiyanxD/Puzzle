@@ -66,4 +66,6 @@ class GameSessionController extends Controller
         $game = json_encode($score);
         return response($game,200);
     }
+
+
 }

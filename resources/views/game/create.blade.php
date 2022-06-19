@@ -51,34 +51,29 @@
             </div>
         </div>
         <div class="row text-center mt-3">
-            <h5 class="text-white">{{__('o tambien, retoma un juego' )}}</h5>
+            <h5 class="text-white">{{__('ó' )}}</h5>
         </div>
-        <div class="row mt-5 justify-content-center">
+        <div class="row mt-2 justify-content-center">
             <div class="col-md-8">
                 <div class="card bg-dark text-white text-center " >
-                    <div class="card-header">{{ __('Configurar dificultad del juego') }}</div>
+                    <div class="card-header">{{ __('Unete a una partida ya creada') }}</div>
                     <div class="card-body">
-                        <form action="{{route('storeImage')}}" method="post" enctype="multipart/form-data">
+                        <form action="{{route('joinGame')}}" method="post" enctype="multipart/form-data">
                             @csrf
                             <div class="row">
-                                <div class="col-lg-6">
-                                    <div class="col">
-                                        <label for="">Numero de filas</label>
-                                        <input type="number" name="rows">
-                                    </div>
-                                    <div class="col">
-                                        <label>Numero de columnas</label>
-                                        <input type="number" name="cols">
-                                    </div>
-                                    <div class="col">
-                                        <input type="file" name="file" accept="image/*">
-                                        @error('file')
-                                        <small>{{$message}}</small>
-                                        @enderror
-                                    </div>
+                                <div class="col form">
+                                    <label class="form'label" for="code_invitation">Ingresa el codigo de invitacion</label>
+                                    <input type="text" class="form-control" name="code_invitation">
+                                    @error('code_invitation')
+                                    <small class="text-white">{{$message}}</small>
+                                    @enderror
                                 </div>
                             </div>
-                            <button type="submit">Load Image</button>
+                            <div class="row py-4">
+                                <div class="col form">
+                                    <button class=" btn btn-outline-primary" type="submit">{{__('Unete')}}</button>
+                                </div>
+                            </div>
                         </form>
                     </div>
                 </div>

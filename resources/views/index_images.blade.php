@@ -23,6 +23,28 @@
         }
     </style>
     <div class="container" style="padding-top: 15px;">
+        <div class="row">
+            <div class=" col text-white">
+                <h5>Puntuacion:</h5>
+                <div>
+                    @if(isset($passedScore))
+                        <h6 id="score">{{$score}}</h6>
+                    @else
+                        <h6 id="score">0</h6>
+                    @endif
+                </div>
+            </div>
+            <div class="col text-white">
+                <h5>Movimientos:</h5>
+                <div>
+                    @if(isset($passedMovements))
+                        <h6 id="movement">{{$passedMovements}}</h6>
+                    @else
+                        <h6 id="movement">0</h6>
+                    @endif
+                </div>
+            </div>
+        </div>
         <div class="row" style="height: 70%">
             <div class="col-lg-3">
                 <div class="row mb-3">
@@ -67,22 +89,7 @@
                 </div>
             </div>
         </div>
-        <div class="row">
-            <div class="text-white">
-                <h3>Puntuacion:</h3>
-                <div >
-                    <h5 id="score">0</h5>
-                </div>
-            </div>
-        </div>
-        <div class="row">
-            <div class="text-white">
-                <h3>Movimientos:</h3>
-                <div >
-                    <h5 id="movement">0</h5>
-                </div>
-            </div>
-        </div>
+
     </div>
 
 
@@ -90,6 +97,7 @@
         const userID = {{ \Illuminate\Support\Js::from( \Illuminate\Support\Facades\Auth::user()->id) }};
         const puzzle = document.getElementById('puzzle');
         const piezas_container = document.getElementById('pieces');
+        let cant_piezas = piezas_container.childElementCount;
 
         const game = {{\Illuminate\Support\Js::from($game)}};
         const cant_cols = game[0].cols;
@@ -118,6 +126,7 @@
             }
         }
 
+
         piezas_container.addEventListener('dragstart',e=>{
            e.dataTransfer.setData('id', e.target.id);
         });
@@ -143,14 +152,17 @@
                 e.target.appendChild(document.getElementById(id));
                 addScore(game[0].id, userID);
                 addMovement(game[0].id, userID);
-
-
+                cant_piezas = cant_piezas-1;
+                if(cant_piezas === 0){
+                    winner(game[0].id);
+                }
             }else{
                 addMovement(game[0].id, userID);
                 subScore(game[0].id, userID);
-
             }
         });
+
+
 
 
         function addScore($gameID, $userID){
@@ -197,6 +209,22 @@
                 },
                 success: function(data){
                     $('#score').html(data.toString());
+                },
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+            });
+        }
+
+        function winner($gameID){
+            let ex = $.ajax({
+                type:"Put",
+                url:"/game/setWinner",
+                data:{
+                    game_id: $gameID,
+                },
+                success: function(data){
+                    alert("Un trofeo más: " + data.toString() + ". Has Ganado");
                 },
                 headers: {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')

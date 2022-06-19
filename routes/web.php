@@ -24,12 +24,15 @@ Route::resource('/status',\App\Http\Controllers\StatusGameController::class)->on
 Route::get('/game/difficulty',[\App\Http\Controllers\GameController::class, 'create'])->name('createGame');
 Route::post('/game/difficulty/set',[\App\Http\Controllers\GameController::class, 'store'])->name('storeGame');
 Route::get('/game/start/{id}',[\App\Http\Controllers\GameController::class, 'start'])->name('startGame');
+Route::post('/game/join',[\App\Http\Controllers\GameController::class,'joinToGame'])->name('joinGame');
+Route::put('/game/setWinner',[\App\Http\Controllers\GameController::class,'setWinner'])->name('setWinner');
 
 
 //GameSession Updates
 Route::put('/game/addScore',[\App\Http\Controllers\GameSessionController::class,'addScore'])->name('addScore');
 Route::put('/game/addMovement',[\App\Http\Controllers\GameSessionController::class,'addMovement'])->name('addMovement');
 Route::put('/game/subScore',[\App\Http\Controllers\GameSessionController::class,'subScore'])->name('subScore');
+
 
 //See saved games
 Route::get('games/saved/{id}',[\App\Http\Controllers\GameController::class,'show'])->name('savedGames');

@@ -20,6 +20,7 @@ class CreateGamesTable extends Migration
             $table->unsignedInteger('rows')->default(0);
             $table->unsignedBigInteger('status_id');
             $table->unsignedBigInteger('user_id');
+            $table->string('winner')->nullable();
             $table->timestamps();
 
             $table->foreign('user_id')->references('id')->on('users');

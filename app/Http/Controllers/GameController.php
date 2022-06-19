@@ -167,15 +167,57 @@ class GameController extends Controller
      */
     public function show($user_id)
     {
-        $games = Game::where('user_id', $user_id)->with('portrait')->get();
-//        return dd($games[0]->portrait->url);
-//        foreach ($games as $portadas){
-//            $portada = $portadas->file->where('is_ful_image', true);
-//        }
-//        $portada = File::where('game_id', $games->id)->get();
-//        return dd($games);
+        $games = Game::where('user_id', $user_id)->with(['portrait','status'])->get();
+
         return view('game.show', compact('games'));
     }
 
 
+    public function joinToGame(Request $request){
+        $request->validate([
+           'code_invitation' => 'required'
+        ]);
+        $game = Game::where('code_invitation', $request->code_invitation)->with(['session'])->get();
+        //Si no ha particiado antes en ese juego, creo una nueva sesion
+        if( count($game) > 0){ //Verifico si el juego existe
+
+            //Si existe, entonces verifico si el juegador no ha jugado antes ese puzzle
+            $gameSession = $game[0]->session;
+
+            for($i = 0; $i< count($gameSession); $i++){
+                if($gameSession[$i]->user_id == Auth::user()->id){
+                    $passedScore = $gameSession[$i]->score;
+                    $passedMovements = $gameSession[$i]->movements;
+                    return redirect()->route('startGame',[$game[0]->id])->with([
+                        ['passedScore',$passedScore],
+                        ['passedMovements'=> $passedMovements]
+                    ]);
+                }
+            }
+            //Si no, entonces creo una nueva session
+            GameSession::create([
+                'game_id' => $game->id,
+                'score' => 0,
+                'movements' => 0
+            ]);
+            return redirect()->route('startGame',[$game->id]);
+        }else{ //Pero, si el juego no existe, entonces debo mostrar que el juego no existe
+            $message = "Vaya, al parecer este puzzle no existe! :(";
+        }
+        return redirect()->route('')->with('message', $message);
+
+    }
+
+    public function setWinner(Request $request){
+        $request->validate([
+            'game_id' => 'required',
+        ]);
+
+        $game = Game::findOrFail($request->game_id);
+
+        $game->winner = Auth::user()->name;
+        $game->status_id = 2;
+        $game->save();
+        return response(json_encode($game->winner),200);
+    }
 }
