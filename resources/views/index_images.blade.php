@@ -1,48 +1,33 @@
 @extends('layouts.app')
 @section('content')
     <style>
-        .my_placeholder{
-            background-color: #25cff2;
-            display: inline-block;
-            cursor: pointer;
-            vertical-align: middle;
-            opacity: 0.4;
-        }
 
-        .my_placeholder_replaced{
-            display: inline-block;
-            vertical-align: middle;
-            opacity: 1;
-        }
-        .hover{
-            background-color: #fd7e14;
-        }
-
-        .image-cover{
-            object-fit: cover;
-        }
     </style>
     <div class="container" style="padding-top: 15px;">
         <div class="row">
             <div class=" col text-white">
-                <h5>Puntuacion:</h5>
-                <div>
+                <h5>Puntuacion:
                     @if(isset($passedScore))
-                        <h6 id="score">{{$score}}</h6>
+                        <span id="score">{{$score}}</span>
                     @else
-                        <h6 id="score">0</h6>
+                        <span id="score">0</span>
                     @endif
-                </div>
+
+                </h5>
             </div>
             <div class="col text-white">
-                <h5>Movimientos:</h5>
-                <div>
+                <h5>Movimientos:
+
                     @if(isset($passedMovements))
-                        <h6 id="movement">{{$passedMovements}}</h6>
+                        <span id="movement">{{$passedMovements}}</span>
                     @else
-                        <h6 id="movement">0</h6>
+                        <span id="movement">0</span>
                     @endif
-                </div>
+                </h5>
+            </div>
+            <div class=" col text-white">
+                <h5>Jugadores en la sesion: <span id="online"> </span> </h5>
+
             </div>
         </div>
         <div class="row" style="height: 70%">
@@ -91,7 +76,46 @@
         </div>
 
     </div>
+    <script>
+        window.PUSHER_APP_KEY = '{{ config('broadcasting.connections.pusher.key') }}';
+        window.APP_DEBUG = {{ config('app.debug') ? 'true' : 'false' }};
+    </script>
 
+    <script>
+        let onlineUsers = 0;
+        const userEvent = {{\Illuminate\Support\Js::from(\Illuminate\Support\Facades\Auth::user()->id)}};
+        const gameEvent = {{\Illuminate\Support\Js::from($game)}};
+
+        // console.log(userEvent.id);
+        function update_online_counter() {
+            document.getElementById('online').textContent = '' + onlineUsers;
+        }
+        // console.log(userEvent)
+        /*window.Echo.join('game.'+ gameEvent[0].id)
+            .listen('GameSessionUserEvent', (e) => {
+                // console.log(e.update());
+                onlineUsers = e.length;
+                console.log(e.length);
+                onlineUsers++;
+                update_online_counter();
+            });*/
+        window.Echo.join('game.'+ gameEvent[0].id)
+            .here((users) => {
+                onlineUsers = users.length;
+
+                update_online_counter();
+            })
+            .joining((user) => {
+                onlineUsers++;
+
+                update_online_counter();
+            })
+            .leaving((user) => {
+                onlineUsers--;
+
+                update_online_counter();
+            });
+    </script>
 
     <script>
         const userID = {{ \Illuminate\Support\Js::from( \Illuminate\Support\Facades\Auth::user()->id) }};
@@ -161,8 +185,6 @@
                 subScore(game[0].id, userID);
             }
         });
-
-
 
 
         function addScore($gameID, $userID){

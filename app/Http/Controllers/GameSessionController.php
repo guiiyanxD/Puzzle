@@ -10,6 +10,10 @@ use function MongoDB\BSON\toJSON;
 
 class GameSessionController extends Controller
 {
+    public function __construct(){
+        $this->middleware('auth');
+    }
+
     public function addScore(Request $request){
         $request->validate([
             'user_id' => 'required',

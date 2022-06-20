@@ -30,16 +30,15 @@
                                 </p>
                             </div>
                             <div class="card-text text-center">
-                                @if( $games[$i]->status->id == 1)
-                                    <p style="background-color: #198754; border-radius: 50px">
-                                        {{$games[$i]->status->name}}
-                                    </p>
+                                @if($games[$i]->status->id === 1)
+                                <p style="background-color: #198754; border-radius: 50px">
+                                    {{$games[$i]->status->name}}
+                                </p>
                                 @else
                                     <p style="background-color: #dc3545; border-radius: 50px">
-                                        {{$games[$i]->status[$i]->name}}
+                                        {{$games[$i]->status->name}}
                                     </p>
                                 @endif
-
                             </div>
                         </div>
                     </div>

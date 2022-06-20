@@ -1,5 +1,7 @@
 <?php
 
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Broadcast;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -48,5 +50,7 @@ Route::get('/images',[\App\Http\Controllers\FileController::class,'indexImages']
 Route::post('/store_image', [\App\Http\Controllers\FileController::class, 'storeImage'])->name('storeImage');
 
 Auth::routes();
+//Broadcast::routes();
+
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');

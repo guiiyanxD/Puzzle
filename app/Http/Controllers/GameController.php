@@ -2,16 +2,22 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\GameSessionUserEvent;
 use App\Models\File;
 use App\Models\Game;
 use App\Models\GameSession;
 use App\Models\PortraitFile;
+use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 
 class GameController extends Controller
 {
+    public function __construct(){
+        $this->middleware('auth');
+    }
     /**
      * Display a listing of the resource.
      *
@@ -73,9 +79,7 @@ class GameController extends Controller
             'status_id' => 1,
         ]);
 
-//        $filePath = Storage::path('public\images\img0'.$col.  '_0' .$row.'ofGame'.$game->id. '.jpg');
 
-//        $fulImageUrl = $request->file('file')->storeAs('public/images/','game_' . $game->id . '.jpg');
         $fulImagesUrl = Storage::path('public/images/game_' . $game->id . '.jpg');
         imagejpeg($resizedImage,$fulImagesUrl);
         imagedestroy($resizedImage);
@@ -84,13 +88,6 @@ class GameController extends Controller
             'game_id' => $game->id,
             'url' => Storage::url('public/images/game_' . $game->id . '.jpg'),
         ]);
-        /*File::create([
-            'game_id' => $game->id,
-            'is_ful_image' => true,
-            'width' => $newW,
-            'height' => $newY,
-            'url' => Storage::url('public/images/game_' . $game->id . '.jpg'),
-        ]);*/
 
         GameSession::create([
             'game_id' => $game->id,
@@ -143,19 +140,14 @@ class GameController extends Controller
     public function start($game_id){
 
         $game = Game::where('id',$game_id)->get();
-//return dd($game);
         $all_images =  File::where('game_id', $game_id )->get();
-
-//        $ful_image  = $all_images->firstOrFail();
         $ful_image  = PortraitFile::where('game_id',$game_id)->get() ;
-//        return dd($ful_image);
-
         $images = $all_images->filter(function($selected_image) {
             return $selected_image->is_ful_image != true;
         });
-
         $images = $images->shuffle();
 
+        broadcast(new GameSessionUserEvent($game[0]));
         return view('index_images', compact('images', 'game', 'ful_image'));
     }
 
@@ -172,7 +164,6 @@ class GameController extends Controller
         return view('game.show', compact('games'));
     }
 
-
     public function joinToGame(Request $request){
         $request->validate([
            'code_invitation' => 'required'
@@ -188,6 +179,7 @@ class GameController extends Controller
                 if($gameSession[$i]->user_id == Auth::user()->id){
                     $passedScore = $gameSession[$i]->score;
                     $passedMovements = $gameSession[$i]->movements;
+                    broadcast(new GameSessionUserEvent($game[0]));
                     return redirect()->route('startGame',[$game[0]->id])->with([
                         ['passedScore',$passedScore],
                         ['passedMovements'=> $passedMovements]
@@ -196,11 +188,14 @@ class GameController extends Controller
             }
             //Si no, entonces creo una nueva session
             GameSession::create([
-                'game_id' => $game->id,
+                'game_id' => $game[0]->id,
                 'score' => 0,
-                'movements' => 0
+                'movements' => 0,
+                'user_id' => Auth::user()->id,
+                'joined_time' => Carbon::now('America/La_Paz'),
             ]);
-            return redirect()->route('startGame',[$game->id]);
+            broadcast(new GameSessionUserEvent($game[0]));
+            return redirect()->route('startGame',[$game[0]->id]);
         }else{ //Pero, si el juego no existe, entonces debo mostrar que el juego no existe
             $message = "Vaya, al parecer este puzzle no existe! :(";
         }

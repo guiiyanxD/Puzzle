@@ -13,6 +13,7 @@
     <script src="{{ asset('js/app.js') }}" defer></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
 {{--    <script src="{{ asset('js/bootstrap.js')}}" ></script>--}}
+    <script src="{{ mix('js/app.js') }}"></script>
 
     <!-- Fonts -->
     <link rel="dns-prefetch" href="//fonts.gstatic.com">
@@ -23,6 +24,27 @@
     <style>
         body{
             background-color: #161c2d;
+        }
+        .my_placeholder{
+            background-color: #25cff2;
+            display: inline-block;
+            cursor: pointer;
+            vertical-align: middle;
+            opacity: 0.4;
+        }
+
+        .my_placeholder_replaced{
+            display: inline-block;
+            vertical-align: middle;
+            opacity: 1;
+        }
+        .hover{
+            /*background-color: #fd7e14;*/
+            background-color: #e388ff;
+        }
+
+        .image-cover{
+            object-fit: cover;
         }
     </style>
 </head>
