@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\MovementsTrackEvent;
 use App\Models\Game;
 use App\Models\GameSession;
 use Illuminate\Http\Request;
@@ -40,6 +41,7 @@ class GameSessionController extends Controller
         ]);
 
         $gameSession = GameSession::where([['game_id', $request->game_id],['user_id', $request->user_id]])->get();
+//        return ddd($gameSession);
         $id = $gameSession[0]->id;
         $movements = $gameSession[0]->movements;
         $movements += 1;
@@ -71,5 +73,14 @@ class GameSessionController extends Controller
         return response($game,200);
     }
 
+    public function reDrawPuzzle(Request $request){
+        $request->validate([
+            'x_index' => 'required',
+            'y_index' => 'required',
+        ]);
+//        return ddd($request->x_index);
 
+        broadcast(new MovementsTrackEvent($request->x_index))->toOthers();
+        return response("it Works",200);
+    }
 }

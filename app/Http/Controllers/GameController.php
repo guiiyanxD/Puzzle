@@ -215,4 +215,5 @@ class GameController extends Controller
         $game->save();
         return response(json_encode($game->winner),200);
     }
+
 }

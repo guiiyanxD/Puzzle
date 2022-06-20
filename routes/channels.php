@@ -22,8 +22,14 @@ Broadcast::channel('App.Models.User.{id}', function ($user, $id) {
 Broadcast::channel('game.{id}', function ($game, $id) {
 
     $session = \App\Models\GameSession::where([['game_id', $game->id], ['user_id', \Illuminate\Support\Facades\Auth::user()->id]])->get();
-//    return dd($session);
-    return $session;
-//    return (int) $game[0]->id === (int) $id  ;
-//    return true;
+    if($session){
+        return json_encode(\Illuminate\Support\Facades\Auth::user());
+    }
+//    return json_encode($session);
+});
+
+
+Broadcast::channel('movTo.{x_index}', function($x_index){
+    $message = "Esta prueba me dira si se envia el evento";
+    return response(json_encode($message),200);
 });

@@ -90,28 +90,22 @@
         function update_online_counter() {
             document.getElementById('online').textContent = '' + onlineUsers;
         }
-        // console.log(userEvent)
-        /*window.Echo.join('game.'+ gameEvent[0].id)
-            .listen('GameSessionUserEvent', (e) => {
-                // console.log(e.update());
-                onlineUsers = e.length;
-                console.log(e.length);
-                onlineUsers++;
-                update_online_counter();
-            });*/
+
         window.Echo.join('game.'+ gameEvent[0].id)
             .here((users) => {
                 onlineUsers = users.length;
-
+                console.log('Estan aqui: ' + users.toString())
                 update_online_counter();
             })
             .joining((user) => {
                 onlineUsers++;
+                console.log("acaba de entrar:" +  user.toString())
 
                 update_online_counter();
             })
             .leaving((user) => {
                 onlineUsers--;
+                console.log('se fue: ' +user.toString())
 
                 update_online_counter();
             });
@@ -131,6 +125,8 @@
         const width = pieces[1].width;
         const height = pieces[1].height;
 
+        let globalIDPieza = 0;//Origen
+        let globalIDCajon = 0;//Destino
 
         for( let i = 0; i <cant_rows; i++ ){
             const divv = document.createElement("div");
@@ -150,7 +146,6 @@
             }
         }
 
-
         piezas_container.addEventListener('dragstart',e=>{
            e.dataTransfer.setData('id', e.target.id);
         });
@@ -168,7 +163,10 @@
             e.target.classList.remove('hover');
 
             const id = e.dataTransfer.getData('id'); //Obtengo el Id de la pieza por que me esta transfiriendo la data que sale con dragStart
-
+            globalIDCajon = e.target.id;//ID del div donde estoy soltando la pieza
+            globalIDPieza = id
+            console.log('goblalIDCajon' + globalIDCajon);
+            // setPieceCorrectPlace(lugarPiezaID, piezaID)
             if( e.target.id === id ){
                 e.target.classList.remove('my_placeholder');
                 e.target.classList.add('my_placeholder_replaced');
@@ -176,16 +174,41 @@
                 e.target.appendChild(document.getElementById(id));
                 addScore(game[0].id, userID);
                 addMovement(game[0].id, userID);
+                reDrawPuzzle(e.target.id, id)//Destino, Origen
                 cant_piezas = cant_piezas-1;
                 if(cant_piezas === 0){
                     winner(game[0].id);
                 }
+
             }else{
                 addMovement(game[0].id, userID);
                 subScore(game[0].id, userID);
             }
         });
 
+        function reDrawPuzzle($x_index, $y_index){
+            console.log($x_index, $y_index)
+            $ex = $.ajax({
+                type:"Post",
+                url:"/game/reDrawGame",
+                data:{
+                    x_index: $x_index,
+                    y_index: $y_index,
+                },
+                success: function(data){
+                    console.log(data.toLocaleString());
+                },
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+            });
+            console.log($ex)
+        }
+
+        window.Echo.channel('movTo.'+ globalIDCajon)
+            .listen('MovementsTrackEvent',(e)=>{
+                console.log("Llega hasta donde escucha"+ e.toString())
+            });
 
         function addScore($gameID, $userID){
             $.ajax({
@@ -219,6 +242,7 @@
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 },
             });
+            // console.log(ex);
         }
 
         function subScore($gameID, $userID){
@@ -253,5 +277,6 @@
                 },
             });
         }
+
     </script>
 @endsection

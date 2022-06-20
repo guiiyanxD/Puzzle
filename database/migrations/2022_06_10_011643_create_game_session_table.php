@@ -17,7 +17,7 @@ class CreateGameSessionTable extends Migration
             $table->id();
             $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('game_id');
-            $table->unsignedInteger('score')->default(0);
+            $table->Integer('score')->default(0);
             $table->unsignedInteger('movements')->default(0);
             $table->string('winner')->nullable();
 

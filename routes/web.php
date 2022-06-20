@@ -34,6 +34,8 @@ Route::put('/game/setWinner',[\App\Http\Controllers\GameController::class,'setWi
 Route::put('/game/addScore',[\App\Http\Controllers\GameSessionController::class,'addScore'])->name('addScore');
 Route::put('/game/addMovement',[\App\Http\Controllers\GameSessionController::class,'addMovement'])->name('addMovement');
 Route::put('/game/subScore',[\App\Http\Controllers\GameSessionController::class,'subScore'])->name('subScore');
+Route::post('/game/reDrawGame',[\App\Http\Controllers\GameSessionController::class,'reDrawPuzzle'])->name('reDrawGame');
+
 
 
 //See saved games
