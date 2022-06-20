@@ -75,12 +75,11 @@ class GameSessionController extends Controller
 
     public function reDrawPuzzle(Request $request){
         $request->validate([
-            'x_index' => 'required',
-            'y_index' => 'required',
+            'idCeldaImage' => 'required',
+            'game_id' => 'required',
         ]);
-//        return ddd($request->x_index);
 
-        broadcast(new MovementsTrackEvent($request->x_index))->toOthers();
+        broadcast(new MovementsTrackEvent($request->idCeldaImage, $request->game_id))->toOthers();
         return response("it Works",200);
     }
 }

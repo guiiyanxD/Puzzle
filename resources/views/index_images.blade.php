@@ -29,6 +29,10 @@
                 <h5>Jugadores en la sesion: <span id="online"> </span> </h5>
 
             </div>
+            <div class=" col text-white">
+                <h5>Info: <span id="showInfo"> </span> </h5>
+
+            </div>
         </div>
         <div class="row" style="height: 70%">
             <div class="col-lg-3">
@@ -66,7 +70,6 @@
                 </div>
             </div>
             <div class="col">
-{{--                    TODO: EN ESTE DIV, EL HEIGTH DEBE SER MULTIPLICADO POR LA CANTIDAD DE FILAS QUE TIENE EL JUEGO--}}
                 <div class="row justify-content-around" style="border: 1px #f0f0f0">
                         <div class="   d-block " id="puzzle">
 
@@ -76,17 +79,16 @@
         </div>
 
     </div>
-    <script>
-        window.PUSHER_APP_KEY = '{{ config('broadcasting.connections.pusher.key') }}';
-        window.APP_DEBUG = {{ config('app.debug') ? 'true' : 'false' }};
-    </script>
 
     <script>
+        /*
+        * Script para el contador de usuarios que esta en linea
+        * */
         let onlineUsers = 0;
         const userEvent = {{\Illuminate\Support\Js::from(\Illuminate\Support\Facades\Auth::user()->id)}};
         const gameEvent = {{\Illuminate\Support\Js::from($game)}};
 
-        // console.log(userEvent.id);
+
         function update_online_counter() {
             document.getElementById('online').textContent = '' + onlineUsers;
         }
@@ -94,24 +96,28 @@
         window.Echo.join('game.'+ gameEvent[0].id)
             .here((users) => {
                 onlineUsers = users.length;
-                console.log('Estan aqui: ' + users.toString())
+                // console.log('Estan aqui: ' + users.toString())
                 update_online_counter();
             })
             .joining((user) => {
                 onlineUsers++;
-                console.log("acaba de entrar:" +  user.toString())
-
+                // console.log("acaba de entrar:" +  user.toString())
                 update_online_counter();
             })
             .leaving((user) => {
                 onlineUsers--;
-                console.log('se fue: ' +user.toString())
-
+                // console.log('se fue: ' +user.toString())
                 update_online_counter();
-            });
+            })
+
     </script>
 
     <script>
+
+        /*
+        * Scrip para el control de los eventos drag and drop, addScore, subScore, addMovement y reDrawGame
+        * Tambien se crean la celda de cada imagen
+        * */
         const userID = {{ \Illuminate\Support\Js::from( \Illuminate\Support\Facades\Auth::user()->id) }};
         const puzzle = document.getElementById('puzzle');
         const piezas_container = document.getElementById('pieces');
@@ -136,7 +142,7 @@
             for(let j =0 ; j<cant_cols;j++){
                 const div = document.createElement("div");
                 div.classList.add('col');
-                div.setAttribute('id',i.toString() + j.toString());
+                div.setAttribute('id','container-'+ i.toString() + j.toString());
                 div.classList.add('my_placeholder');
                 div.style.width = width.toString() + 'px';
                 div.style.height = height.toString() + 'px';
@@ -163,18 +169,18 @@
             e.target.classList.remove('hover');
 
             const id = e.dataTransfer.getData('id'); //Obtengo el Id de la pieza por que me esta transfiriendo la data que sale con dragStart
-            globalIDCajon = e.target.id;//ID del div donde estoy soltando la pieza
+            globalIDCajon = e.target.id.split('-');//ID del div donde estoy soltando la pieza
             globalIDPieza = id
-            console.log('goblalIDCajon' + globalIDCajon);
+            console.log('goblalIDCajon: ' + globalIDCajon[1]);
             // setPieceCorrectPlace(lugarPiezaID, piezaID)
-            if( e.target.id === id ){
+            if( globalIDCajon[1] === id ){
                 e.target.classList.remove('my_placeholder');
                 e.target.classList.add('my_placeholder_replaced');
                 e.target.classList.add('image_cover');
                 e.target.appendChild(document.getElementById(id));
                 addScore(game[0].id, userID);
                 addMovement(game[0].id, userID);
-                reDrawPuzzle(e.target.id, id)//Destino, Origen
+                sentReDrawPuzzle(e.target.id, game[0].id)//ID Container de la pieza, y el id del juego
                 cant_piezas = cant_piezas-1;
                 if(cant_piezas === 0){
                     winner(game[0].id);
@@ -186,30 +192,39 @@
             }
         });
 
-        function reDrawPuzzle($x_index, $y_index){
-            console.log($x_index, $y_index)
-            $ex = $.ajax({
+        //Cada vez que se ejecuta el drop, se envia una peticion post con el ID del div donde tiene que ir la pieza,
+        //y con el codigo de aqui abajo se reacciona al evento y se actualiza en las demas sesiones
+        window.Echo.join('game.' + game[0].id) //aqui se anadio el gameid[0]
+            .listen('MovementsTrackEvent',($data)=>{
+                reDrawGame($data.idCeldaImage);
+            });
+
+        function sentReDrawPuzzle($idCeldaImage, $gameID){
+            $.ajax({
                 type:"Post",
                 url:"/game/reDrawGame",
                 data:{
-                    x_index: $x_index,
-                    y_index: $y_index,
-                },
+                    idCeldaImage: $idCeldaImage,
+                    game_id : $gameID,
+                }/*,
                 success: function(data){
                     console.log(data.toLocaleString());
-                },
+                }*/,
                 headers: {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 },
             });
-            console.log($ex)
         }
+        function reDrawGame($idCeldaImage){
+            let piezaID = $idCeldaImage.split('-');
 
-        window.Echo.channel('movTo.'+ globalIDCajon)
-            .listen('MovementsTrackEvent',(e)=>{
-                console.log("Llega hasta donde escucha"+ e.toString())
-            });
+            divPieza = document.getElementById(piezaID[1]);
+            divContainer = document.getElementById($idCeldaImage);
 
+            divContainer.classList.add('my_placeholder_replaced');
+            divContainer.classList.add('image_cover');
+            divContainer.appendChild(divPieza);
+        }
         function addScore($gameID, $userID){
             $.ajax({
                 type:"Put",
@@ -226,7 +241,6 @@
                 },
             });
         }
-
         function addMovement($gameID, $userID){
             $.ajax({
                 type:"Put",
@@ -244,7 +258,6 @@
             });
             // console.log(ex);
         }
-
         function subScore($gameID, $userID){
             $.ajax({
                 type:"Put",
@@ -261,7 +274,6 @@
                 },
             });
         }
-
         function winner($gameID){
             let ex = $.ajax({
                 type:"Put",

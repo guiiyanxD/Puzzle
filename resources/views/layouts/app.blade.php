@@ -14,7 +14,10 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
 {{--    <script src="{{ asset('js/bootstrap.js')}}" ></script>--}}
     <script src="{{ mix('js/app.js') }}"></script>
-
+    <script>
+        window.PUSHER_APP_KEY = '{{ config('broadcasting.connections.pusher.key') }}';
+        window.APP_DEBUG = {{ config('app.debug') ? 'true' : 'false' }};
+    </script>
     <!-- Fonts -->
     <link rel="dns-prefetch" href="//fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css?family=Nunito" rel="stylesheet">

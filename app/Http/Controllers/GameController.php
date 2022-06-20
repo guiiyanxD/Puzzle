@@ -147,7 +147,7 @@ class GameController extends Controller
         });
         $images = $images->shuffle();
 
-        broadcast(new GameSessionUserEvent($game[0]));
+        broadcast(new GameSessionUserEvent($game[0]))->toOthers();
         return view('index_images', compact('images', 'game', 'ful_image'));
     }
 

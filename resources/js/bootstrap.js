@@ -42,6 +42,6 @@ window.Echo = new Echo({
         }
     }
 
+
 });
 
-window.Echo.private()

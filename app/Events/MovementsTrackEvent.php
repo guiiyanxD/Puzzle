@@ -15,18 +15,18 @@ class MovementsTrackEvent implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    public $x_index;
-//    public $y_index;
+    public $idCeldaImage;
+    public $game_id;
     /**
      * Create a new event instance.
      *
      * @return void
      */
-    public function __construct($x_index)
+    public function __construct($idCeldaImage, $game_id)
     {
 
-        $this->x_index = $x_index;
-//        $this->y_index = $y_index;
+        $this->idCeldaImage = $idCeldaImage;
+        $this->game_id = $game_id;
     }
 
     /**
@@ -36,6 +36,7 @@ class MovementsTrackEvent implements ShouldBroadcast
      */
     public function broadcastOn()
     {
-        return new PresenceChannel('movTo.'. $this->x_index);
+//        $x_index = $this->x_index;
+        return new PresenceChannel('game.' . $this->game_id);
     }
 }
