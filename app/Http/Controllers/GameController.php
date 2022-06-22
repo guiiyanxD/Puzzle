@@ -56,7 +56,7 @@ class GameController extends Controller
         //Image I want to work with
         $source = imagecreatefromjpeg( $request->file('file') );
 //        return dd($request->file('file')->storeAs('public/images/','Prueba.jpg'));
-        $testImage = $request->file('file')->storeAs('public/images/','Prueba.jpg');
+//        $testImage = $request->file('file')->storeAs('public/images/','Prueba.jpg');
         $source_width = imagesx( $source );
         $source_height = imagesy( $source );
 
@@ -91,7 +91,7 @@ class GameController extends Controller
 
         PortraitFile::create([
             'game_id' => $game->id,
-            'url' => Storage::url($testImage),
+            'url' => Storage::url('public/images/game_' . $game->id . '.jpg'),
         ]);
 
         GameSession::create([
@@ -149,7 +149,7 @@ class GameController extends Controller
         $ful_image  = PortraitFile::where('game_id',$game_id)->get();
 
 
-//                return dd($image);
+//                return dd(Stora);
         $images = $all_images->filter(function($selected_image) {
             return $selected_image->is_ful_image != true;
         });
