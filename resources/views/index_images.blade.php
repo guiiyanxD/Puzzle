@@ -39,9 +39,9 @@
                                 <h5>{{__('Imagen completa')}}</h5>
                             </div>
                             <div class="card-body" style="">
-                                <img class="img-fluid image-cover" src="{{ $ful_image}}" alt="">
+                                <img class="img-fluid image-cover" src="{{ asset($ful_image[0]->url)}}" alt="">
                                 <script>
-                                    console.log({{\Illuminate\Support\Js::from( $ful_image)}})
+                                    console.log({{\Illuminate\Support\Js::from( asset($ful_image[0]->url))}})
                                 </script>
                             </div>
                         </div>
@@ -58,9 +58,9 @@
 {{--                                    {{ shuffle($images) }}--}}
                                     @foreach($images as $cat)
                                         <div class="col-lg-3 p-0 " style="cursor: move" draggable="true" >
-                                            <img class=" img-fluid img-thumbnail mx-auto p-1" id="{{$cat->y_index . $cat->x_index}}" src="{{ ($assets[$loop->index])}}" alt="" style="display: block; object-fit: cover;" >
+                                            <img class=" img-fluid img-thumbnail mx-auto p-1" id="{{$cat->y_index . $cat->x_index}}" src="{{ asset($cat->url) }}" alt="" style="display: block; object-fit: cover;" >
                                             <script>
-                                                console.log({{\Illuminate\Support\Js::from(($assets[$loop->index])) }})
+                                                console.log({{\Illuminate\Support\Js::from(asset($cat->url)) }})
                                             </script>
                                         </div>
                                     @endforeach
