@@ -41,7 +41,7 @@
                             <div class="card-body" style="">
                                 <img class="img-fluid image-cover" src="{{secure_asset($ful_image[0]->url)}}" alt="">
                                 <script>
-                                    console.log({{\Illuminate\Support\Js::from(secure_asset($ful_image[0]->url))}})
+                                    console.log({{\Illuminate\Support\Js::from(Storage::path($ful_image[0]->url))}})
                                 </script>
                             </div>
                         </div>
