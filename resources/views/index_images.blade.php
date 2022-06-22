@@ -39,7 +39,7 @@
                                 <h5>{{__('Imagen completa')}}</h5>
                             </div>
                             <div class="card-body" style="">
-                                <img class="img-fluid image-cover" src="{{secure_asset($ful_image[0]->url)}}" alt="">
+                                <img class="img-fluid image-cover" src="{{Storage::path($ful_image[0]->url)}}" alt="">
                                 <script>
                                     console.log({{\Illuminate\Support\Js::from(Storage::path($ful_image[0]->url))}})
                                 </script>
