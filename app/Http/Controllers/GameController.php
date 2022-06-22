@@ -165,7 +165,7 @@ class GameController extends Controller
 //        $images = $assets;
 //        return dd($images);
 //        $images = asset($images[0]->url);
-        return dd($assets);
+//        return dd($assets);
         broadcast(new GameSessionUserEvent($game[0]))->toOthers();
         return view('index_images', compact('images', 'game', 'ful_image', 'assets'));
     }
