@@ -79,8 +79,11 @@ class GameController extends Controller
             'status_id' => 1,
         ]);
 
+//        return dd(Storage::path('public/images/'));
 
+        $this->createDirecrotory(Storage::path('public/images/'));
         $fulImagesUrl = Storage::path('public/images/game_' . $game->id . '.jpg');
+
         imagejpeg($resizedImage,$fulImagesUrl);
         imagedestroy($resizedImage);
 
@@ -216,4 +219,11 @@ class GameController extends Controller
         return response(json_encode($game->winner),200);
     }
 
+    public function createDirecrotory($path)
+    {
+        if(!\Illuminate\Support\Facades\File::isDirectory($path)){
+            return \Illuminate\Support\Facades\File::makeDirectory($path);
+        }
+
+    }
 }
