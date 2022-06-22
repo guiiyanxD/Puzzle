@@ -83,8 +83,8 @@ class GameController extends Controller
 
 //        return dd(Storage::path('images/'));
 
-        $this->createDirecrotory(Storage::path('public/images/'));
-        $fulImagesUrl = Storage::path('public/images/game_' . $game->id . '.jpg');
+        $this->createDirecrotory(Storage::path('images/'));
+        $fulImagesUrl = Storage::path('images/game_' . $game->id . '.jpg');
         imagejpeg($resizedImage,$fulImagesUrl);
         imagedestroy($resizedImage);
 //        return dd(Storage::path('public/images/game_' . $game->id . '.jpg'), Storage::url('public/images/game_' . $game->id . '.jpg'));
@@ -92,7 +92,7 @@ class GameController extends Controller
 
         PortraitFile::create([
             'game_id' => $game->id,
-            'url' => Storage::url('public/images/game_' . $game->id . '.jpg'),
+            'url' => Storage::url('images/game_' . $game->id . '.jpg'),
         ]);
 
         GameSession::create([
@@ -115,7 +115,7 @@ class GameController extends Controller
             for( $row = 0;  $row < $request->rows; $row++)
             {
                 //Name to the splited images
-                $filePath = Storage::path('public/images/img0'.$col.  '_0' .$row.'ofGame'.$game->id. '.jpg');
+                $filePath = Storage::path('images/img0'.$col.  '_0' .$row.'ofGame'.$game->id. '.jpg');
                 //Creating the new Image
                 $im = @imagecreatetruecolor( $piecesWidth, $piecesHeight);
                 //Setting the new image content from source in the specified coordinates
@@ -125,7 +125,7 @@ class GameController extends Controller
                 //free memory
                 imagedestroy( $im );
                 //Path to access from server
-                $fileName = 'public/images/img0'.$col.  '_0' .$row.'ofGame'.$game->id. '.jpg';
+                $fileName = 'images/img0'.$col.  '_0' .$row.'ofGame'.$game->id. '.jpg';
                 $url = Storage::url($fileName);
                 File::create([
                     'url' => $url,
