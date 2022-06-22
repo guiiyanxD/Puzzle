@@ -222,7 +222,7 @@ class GameController extends Controller
     public function createDirecrotory($path)
     {
         if(!\Illuminate\Support\Facades\File::isDirectory($path)){
-            return \Illuminate\Support\Facades\File::makeDirectory($path);
+            return \Illuminate\Support\Facades\File::makeDirectory($path, 0777, true, true);
         }
 
     }
