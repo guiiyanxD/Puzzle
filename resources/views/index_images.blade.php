@@ -60,7 +60,7 @@
                                         <div class="col-lg-3 p-0 " style="cursor: move" draggable="true" >
                                             <img class=" img-fluid img-thumbnail mx-auto p-1" id="{{$cat->y_index . $cat->x_index}}" src="{{ ($assets[$loop->index])}}" alt="" style="display: block; object-fit: cover;" >
                                             <script>
-                                                console.log({{\Illuminate\Support\Js::from($cat) }})
+                                                console.log({{\Illuminate\Support\Js::from(($assets[$loop->index])) }})
                                             </script>
                                         </div>
                                     @endforeach

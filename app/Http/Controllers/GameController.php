@@ -115,7 +115,7 @@ class GameController extends Controller
             for( $row = 0;  $row < $request->rows; $row++)
             {
                 //Name to the splited images
-                $filePath = Storage::path('public\images\img0'.$col.  '_0' .$row.'ofGame'.$game->id. '.jpg');
+                $filePath = Storage::path('public/images/img0'.$col.  '_0' .$row.'ofGame'.$game->id. '.jpg');
                 //Creating the new Image
                 $im = @imagecreatetruecolor( $piecesWidth, $piecesHeight);
                 //Setting the new image content from source in the specified coordinates
@@ -165,7 +165,7 @@ class GameController extends Controller
 //        $images = $assets;
 //        return dd($images);
 //        $images = asset($images[0]->url);
-//        return dd($images);
+        return dd($assets);
         broadcast(new GameSessionUserEvent($game[0]))->toOthers();
         return view('index_images', compact('images', 'game', 'ful_image', 'assets'));
     }
