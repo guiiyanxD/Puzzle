@@ -79,9 +79,9 @@ class GameController extends Controller
             'status_id' => 1,
         ]);
 
-//        return dd(Storage::path('public/images/'));
+//        return dd(Storage::path('images/'));
 
-        $this->createDirecrotory(Storage::path('/public/images/'));
+        $this->createDirecrotory(Storage::path('public/images/'));
         $fulImagesUrl = Storage::path('public/images/game_' . $game->id . '.jpg');
 //        return dd($fulImagesUrl, (Storage::url('public/images/game_' . $game->id . '.jpg')), asset('/public/images/game_' . $game->id . '.jpg'));
         imagejpeg($resizedImage,$fulImagesUrl);
@@ -89,7 +89,7 @@ class GameController extends Controller
 
         PortraitFile::create([
             'game_id' => $game->id,
-            'url' => Storage::url('public/images/game_' . $game->id . '.jpg'),
+            'url' => Storage::url('images/game_' . $game->id . '.jpg'),
         ]);
 
         GameSession::create([
