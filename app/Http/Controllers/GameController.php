@@ -85,9 +85,10 @@ class GameController extends Controller
 
         $this->createDirecrotory(Storage::path('public/images/'));
         $fulImagesUrl = Storage::path('public/images/game_' . $game->id . '.jpg');
-//        return dd($fulImagesUrl, (Storage::url('public/images/game_' . $game->id . '.jpg')), asset('/public/images/game_' . $game->id . '.jpg'));
         imagejpeg($resizedImage,$fulImagesUrl);
         imagedestroy($resizedImage);
+//        return dd(Storage::path('public/images/game_' . $game->id . '.jpg'), Storage::url('public/images/game_' . $game->id . '.jpg'));
+
 
         PortraitFile::create([
             'game_id' => $game->id,
@@ -147,16 +148,26 @@ class GameController extends Controller
         $game = Game::where('id',$game_id)->get();
         $all_images =  File::where('game_id', $game_id )->get();
         $ful_image  = PortraitFile::where('game_id',$game_id)->get();
+        $ful_image = asset($ful_image[0]->url);
+//        return dd($ful_image);
 
-
-//                return dd(Stora);
         $images = $all_images->filter(function($selected_image) {
             return $selected_image->is_ful_image != true;
         });
+//        return dd(count($images));
         $images = $images->shuffle();
 
+        $assets = collect([]);
+        for($i =0;  $i < count($images); $i++){
+            $assets = $assets->push(asset($images[$i]->url));
+        }
+
+//        $images = $assets;
+//        return dd($images);
+//        $images = asset($images[0]->url);
+//        return dd($images);
         broadcast(new GameSessionUserEvent($game[0]))->toOthers();
-        return view('index_images', compact('images', 'game', 'ful_image'));
+        return view('index_images', compact('images', 'game', 'ful_image', 'assets'));
     }
 
     /**
