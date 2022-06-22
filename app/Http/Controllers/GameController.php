@@ -81,7 +81,7 @@ class GameController extends Controller
 
 //        return dd(Storage::path('public/images/'));
 
-        $this->createDirecrotory(Storage::path('public/images/'));
+        $this->createDirecrotory(Storage::path('/images/'));
         $fulImagesUrl = Storage::path('/images/game_' . $game->id . '.jpg');
 
         imagejpeg($resizedImage,$fulImagesUrl);
