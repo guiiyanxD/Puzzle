@@ -37,8 +37,8 @@ return [
             'app_id' => env('PUSHER_APP_ID'),
             'options' => [
                 'cluster' => env('PUSHER_APP_CLUSTER'),
-                'useTLS' => false,
-                'encrypted' => true,
+                'useTLS' => true, //try to delete if sth doesnt work
+                'encrypted' => true, //try to delete if sth doesnt work
                 'port' => 6001,
                 'schema' => 'http',
                 'host' => '127.0.0.1'
