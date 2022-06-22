@@ -81,15 +81,15 @@ class GameController extends Controller
 
 //        return dd(Storage::path('public/images/'));
 
-        $this->createDirecrotory(Storage::path('/images/'));
-        $fulImagesUrl = Storage::path('/images/game_' . $game->id . '.jpg');
+        $this->createDirecrotory(Storage::path('/public/images/'));
+        $fulImagesUrl = Storage::path('public/images/game_' . $game->id . '.jpg');
 
         imagejpeg($resizedImage,$fulImagesUrl);
         imagedestroy($resizedImage);
 
         PortraitFile::create([
             'game_id' => $game->id,
-            'url' => Storage::url('/images/game_' . $game->id . '.jpg'),
+            'url' => Storage::url('public/images/game_' . $game->id . '.jpg'),
         ]);
 
         GameSession::create([
@@ -221,8 +221,9 @@ class GameController extends Controller
 
     public function createDirecrotory($path)
     {
+//        return dd($path);
         if(!\Illuminate\Support\Facades\File::isDirectory($path)){
-            return \Illuminate\Support\Facades\File::makeDirectory($path, 0777, true, true);
+            return (\Illuminate\Support\Facades\File::makeDirectory($path, 0755, true, true));
         }
 
     }
