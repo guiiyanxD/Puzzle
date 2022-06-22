@@ -29,10 +29,6 @@
                 <h5>Jugadores en la sesion: <span id="online"> </span> </h5>
 
             </div>
-            <div class=" col text-white">
-                <h5>Info: <span id="showInfo"> </span> </h5>
-
-            </div>
         </div>
         <div class="row" style="height: 70%">
             <div class="col-lg-3">
