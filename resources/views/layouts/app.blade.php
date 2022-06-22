@@ -57,7 +57,7 @@
             <div class="container">
                 <a class="navbar-brand" href="{{ url('/home') }}">
 {{--                    {{ config('app.name', 'Laravel') }}--}}
-                    <img src="{{asset('/storage/dashboard/puzzle.png')}}" width="30" height="26" alt="">
+                    <img src="{{asset('/dashboard/puzzle.png')}}" width="30" height="26" alt="">
                     <strong class="text-white">{{ __('Puzzle Inador 3000') }}</strong>
                 </a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="{{ __('Toggle navigation') }}">
