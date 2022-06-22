@@ -40,7 +40,9 @@ Route::post('/game/reDrawGame',[\App\Http\Controllers\GameSessionController::cla
 
 //See saved games
 Route::get('games/saved/{id}',[\App\Http\Controllers\GameController::class,'show'])->name('savedGames');
-
+Route::get('stprage-link', function(){
+   \Illuminate\Support\Facades\Artisan::call('storage:link');
+});
 
 
 Route::get('/load_image', function (){
