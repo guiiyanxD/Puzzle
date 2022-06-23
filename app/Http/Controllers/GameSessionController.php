@@ -41,7 +41,6 @@ class GameSessionController extends Controller
         ]);
 
         $gameSession = GameSession::where([['game_id', $request->game_id],['user_id', $request->user_id]])->get();
-//        return ddd($gameSession);
         $id = $gameSession[0]->id;
         $movements = $gameSession[0]->movements;
         $movements += 1;
