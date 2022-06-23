@@ -33,7 +33,7 @@ window.Echo = new Echo({
     wsPort: 6001,
 
     wssPort: 6002,
-    forceTLS: true,
+    forceTLS: false,
     disableStats: true,
     scheme: process.env.MIX_PUSHER_SCHEME,
     enabledTransports: ['ws','wss'],
