@@ -252,6 +252,7 @@
                     user_id: $userID,
                 },
                 success: function(data){
+                    console.log(data);
                     $('#movement').html(data.toString());
                 },
                 headers: {
