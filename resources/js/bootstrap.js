@@ -32,8 +32,8 @@ window.Echo = new Echo({
     wsHost: window.location.hostname,
     wsPort: 6001,
 
-    wssPort: window.APP_DEBUG ? 6001 : 6002,
-    forceTLS: false,
+    wssPort: 6001,
+    forceTLS: true,
     disableStats: true,
     scheme: process.env.MIX_PUSHER_SCHEME,
     enabledTransports: ['ws','wss'],
