@@ -40,7 +40,7 @@ return [
 //                'useTLS' => true, //try to delete if sth doesnt work
                 'encrypted' => true, //try to delete if sth doesnt work
                 'port' => 443,
-                'schema' => 'https',
+                'scheme' => 'https',
                 'host' => '127.0.0.1'
             ],
         ],
