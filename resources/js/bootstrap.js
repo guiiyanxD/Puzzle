@@ -35,11 +35,11 @@ window.Echo = new Echo({
     wssPort: 6001,
     forceTLS: true,
     disableStats: true,
-    scheme: process.env.MIX_PUSHER_SCHEME,
     enabledTransports: ['ws','wss'],
+    scheme: process.env.MIX_PUSHER_SCHEME,
     auth: {
         headers: {
-            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
         }
     }
 

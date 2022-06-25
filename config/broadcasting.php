@@ -39,9 +39,14 @@ return [
                 'cluster' => env('PUSHER_APP_CLUSTER'),
                 'useTLS' => true, //try to delete if sth doesnt work
                 'encrypted' => true, //try to delete if sth doesnt work
-                'port' => 443,
+                'port' => 6001,
                 'scheme' => 'https',
-                'host' => '127.0.0.1'
+                'host' => '127.0.0.1',
+                'curl_options' => [
+                    CURLOPT_SSL_VERIFYHOST => 0,
+                    CURLOPT_SSL_VERIFYPEER => 0,
+
+                ],
             ],
         ],
 
